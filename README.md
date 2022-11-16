@@ -29,8 +29,6 @@ image:
   tag: "1.0.1"
 
 imagePullSecrets: []
-nameOverride: "consulta-saldo-gateway"
-fullnameOverride: "consulta-saldo-gateway"
 
 serviceAccount:
   create: true
@@ -83,14 +81,16 @@ environments:
 environmentsFrom:
   - configMapRef:
       name: consulta-saldo-gateway-cm
+  - secretRef:
+      name: consulta-saldo-gateway-sc
 
 resources:
   limits:
     cpu: 400m
-    memory: 1024Mi
+    memory: 1280Mi
   requests:
     cpu: 200m
-    memory: 640Mi
+    memory: 896Mi
 
 ports:
   name: http
@@ -134,6 +134,13 @@ configmap:
   data:
     spring.application.name: "Consulta Saldo Gateway"
     spring.mvc.static-path-pattern: /resources/**
+
+secret:
+  enabled: true
+  name: consulta-saldo-gateway-sc
+  data:
+    amq.user: YWRtaW4=
+    amq.password: YWRtaW4=
 ```
 
 ## Instalación
@@ -142,13 +149,13 @@ El siguiente comando despliegua una aplicación en Openshift
 
 - [ ] Clonar este repositorio (solo la primera vez)
 ```
-git clone https://gitlab.consulting.redhat.com/consulting-colombia/middleware/helm-charts/devops.git
+git clone https://gitlab.consulting.redhat.com/consulting-nola/middleware/xm/devops/helm-charts/applications.git
 ```
 
 - [ ] Ubicarse en la carpeta del helm chart
 
 ```
-cd devops/charts/applications/
+cd applications/
 ```
 
 - [ ] Hacer login en el cluster de Openshift donde se desea instalar
@@ -164,4 +171,4 @@ helm template -f values.yaml ./ | oc apply -f -
 
 ## Author
 
-* **Lázaro Miguel Coronado Torres** - *Middleware Senior Consultant - lcoronad@redhat.com* 
+* **Lázaro Miguel Coronado Torres** - *Architect - lcoronad@redhat.com* 
