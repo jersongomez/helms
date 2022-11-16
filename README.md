@@ -143,6 +143,14 @@ secret:
     amq.password: YWRtaW4=
 ```
 
+## Empaquetar para subir a repo maven
+
+El siguiente comando empaqueta el helm chart para subirlo a un repo de maven y se pueda usar para todas las aplicaciones
+
+```
+helm package ./ --version 1.0.0
+```
+
 ## Instalación
 
 El siguiente comando despliegua una aplicación en Openshift

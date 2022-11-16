@@ -1,5 +1,5 @@
 apiVersion: v2
-name: app
+name: applications
 description: A Helm chart of Red Hat for deploy applications in Openshift
 
 # A chart can be either an 'application' or a 'library' chart.
