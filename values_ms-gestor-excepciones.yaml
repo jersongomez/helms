@@ -1,0 +1,146 @@
+# Values for app.
+
+nameOverride: ms-gestor-excepciones
+fullnameOverride: ms-gestor-excepciones
+runtime: Camel
+
+replicaCount: 1
+
+image:
+  repository: image-registry.openshift-image-registry.svc:5000/xm-entradas/ms-gestor-excepciones
+  pullPolicy: IfNotPresent
+  tag: "0.0.2"
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ms-gestor-excepciones
+
+podAnnotations:
+  sidecar.istio.io/inject: "true"
+  sidecar.istio.io/rewriteAppHTTPProbe: 'true'
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: http
+  protocol: TCP
+  name: http
+
+routes:
+  - enabled: true
+    name: ms-gestor-excepciones-route
+    ## Opcional, si no se especifica Openshift lo genera
+    #host: consulta-saldo-gateway.apps.cluster-8d6w2.8d6w2.sandbox1784.opentlc.com
+    service:
+      name: ms-gestor-excepciones
+    targetPort: http
+    ## More information: https://docs.openshift.com/container-platform/4.6/networking/routes/secured-routes.html
+    tls:
+      enabled: false
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+      ## IMPORTANT: Do not check 'key' into git!
+      key:
+      caCertificate:
+      certificate:
+      destinationCACertificate:
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+
+environments:
+  - name: SPRING_APPLICATION_JSON
+    value: '{"server":{"undertow":{"io-threads":10, "worker-threads":20 }}}'
+  - name: JAVA_OPTIONS
+    value: '-Xms640m -Xmx1024m -Dfile.encoding=ISO-8859-1'
+
+environmentsFrom:
+  - configMapRef:
+      name: ms-gestor-excepciones-cm
+  - secretRef:
+      name: ms-gestor-excepciones-sc
+
+resources:
+  limits:
+    cpu: 400m
+    memory: 1280Mi
+  requests:
+    cpu: 200m
+    memory: 896Mi
+
+ports:
+  name: http
+  port: 8080
+  protocol: TCP
+
+probe:
+  enabled: true
+  liveness:
+    path: /actuator/health
+    port: http
+    failureThreshold: 3
+    initialDelaySeconds: 40
+    periodSeconds: 60
+    successThreshold: 1
+    timeoutSeconds: 120
+  readiness:
+    path: /actuator/health
+    port: http
+    failureThreshold: 3
+    initialDelaySeconds: 40
+    periodSeconds: 60
+    successThreshold: 1
+    timeoutSeconds: 120
+
+autoscaling:
+  enabled: false
+  kind: Deployment
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+  #targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+configmap:
+  name: ms-gestor-excepciones-cm
+  data:
+    server.port: "8080"
+    endpoints.enabled: "false"
+    endpoints.health.enabled: "true"
+    amq.process.exception.host: amqp://broker-dev-aceptor-0-svc.amq.svc.cluster.local
+    amq.process.exception.port: "5672"
+    amq.process.exception.applicationName: ms-gestor-excepciones
+    amq.process.exception.exceptionQueue: VAR.IN.ERROR.QUEUE
+    amq.process.exception.notificationQueue: VAR.IN.NOTIFICATIONS.QUEUE
+    excepciones.negocio: java.lang.Exception,co.com.xm.exception.NoDataFoundInOriginException,co.com.xm.exception.GenericRouteException,co.com.xm.exception.NoDataMappingFoundException,co.com.xm.output.exception.AttributteNotDefinedException,co.com.xm.output.exception.FileNameMalformedException,co.com.xm.exception.MappingAttributeException,co.com.xm.exception.NoDataFoundException,co.com.xm.exception.NoDataValidException,co.com.xm.output.exception.EmptyFileException,co.com.xm.exception.SQLException
+    excepciones.tecnicas: org.apache.camel.RuntimeExchangeException,org.apache.camel.RuntimeCamelException,java.lang.RuntimeException,org.apache.camel.component.directvm.DirectVmConsumerNotAvailableException,org.springframework.jdbc.UncategorizedSQLException,org.springframework.jdbc.CannotGetJdbcConnectionException,org.apache.cxf.transport.http.HTTPException,org.apache.cxf.interceptor.Fault
+    enable.email.notifications: "true"
+    mail.origen: Soporte ESB Fuse <soportetecnicoESB@xm.com.co>
+    mail.asunto: FUSE Error Pruebas Summan
+    mail.contentType: text/html
+    mail.destinatarios.notcategorized.exceptions: danielsa@redhat.com
+    mail.destinatarios.businsess.exceptions: danielsa@redhat.com
+    mail.destinatarios.technical.exceptions: danielsa@redhat.com
+    log.appender.urlService: https://run.mocky.io/v3/bae7dd84-3220-4c09-84b2-ea55a233a8e7?mocky-delay=10s
+    log.appender.applicationName: ms-gestor-excepciones
+
+secret:
+  enabled: true
+  name: ms-gestor-excepciones-sc
+  data:
+    amq.process.exception.user: YWRtaW4=
+    amq.process.exception.password: YWRtaW4=
