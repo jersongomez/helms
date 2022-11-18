@@ -1,3 +1,4 @@
+{{- if .Values.service }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       protocol: {{ .Values.service.protocol | default "TCP" }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}
+{{- end }}
