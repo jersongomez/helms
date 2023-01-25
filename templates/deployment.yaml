@@ -31,6 +31,16 @@ spec:
       securityContext:
         {{- toYaml .Values.deployment.podSecurityContext | nindent 8 }}
       {{- end }}
+      {{- if .Values.deployment.storages }}
+      volumes:
+        {{- range $storage := .Values.deployment.storages }}
+        {{- if $storage.enabled }}
+        - name: {{ $storage.name }}
+          persistentVolumeClaim:
+            claimName: {{ $storage.name }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ include "app.fullname" . }}
           {{- if .Values.deployment.securityContext -}}
@@ -47,6 +57,15 @@ spec:
             {{- toYaml .Values.deployment.environmentsFrom | nindent 12 }}
           {{- end }}
           imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          {{- if .Values.deployment.storages }}
+          volumeMounts:
+            {{- range $storage := .Values.deployment.storages }}
+            {{- if $storage.enabled }}
+            - name: {{ $storage.name }}
+              mountPath: {{ $storage.mountPath }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
           ports:
             - name: {{ .Values.deployment.ports.name | default "http" }}
               containerPort: {{ .Values.deployment.ports.port }}

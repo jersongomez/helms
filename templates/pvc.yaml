@@ -1,0 +1,22 @@
+{{- if .Values.deployment }}
+{{- if .Values.deployment.storages }}
+{{- range $storage := .Values.deployment.storages }}
+{{- if $storage.enabled }}
+{{- if $storage.generatePVC }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $storage.name }}
+spec:
+  accessModes:
+    - {{ $storage.accessModes }}
+  resources:
+    requests:
+      storage: {{ $storage.size }}
+  storageClassName: {{ $storage.storageClassName }}
+  volumeMode: {{ $storage.volumeMode }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
