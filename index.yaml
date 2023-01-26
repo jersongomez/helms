@@ -3,12 +3,12 @@ entries:
   applications:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-01-25T15:26:17.400748763-05:00"
+    created: "2023-01-26T11:11:18.470030931-05:00"
     description: A Helm chart of Red Hat for deploy applications in Openshift
-    digest: 0fbacd64233f6745c1ec444960d450905a9031199367a66d7d3eed4cd55b4f62
+    digest: 6274c4835c7c8864ba9029bf1d9f17b1c4fdaf57ed5e56d2fae0e8447da95dd3
     name: applications
     type: application
     urls:
     - charts/applications-1.0.0.tgz
     version: 1.0.0
-generated: "2023-01-25T15:26:17.399498708-05:00"
+generated: "2023-01-26T11:11:18.458868292-05:00"
