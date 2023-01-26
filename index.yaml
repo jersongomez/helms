@@ -9,6 +9,6 @@ entries:
     name: applications
     type: application
     urls:
-    - chats/applications-1.0.0.tgz
+    - charts/applications-1.0.0.tgz
     version: 1.0.0
 generated: "2023-01-25T15:26:17.399498708-05:00"
